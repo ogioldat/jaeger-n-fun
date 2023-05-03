@@ -1,5 +1,7 @@
 FROM python:3.11.3-bullseye
 
+ENV NODEJS_SERVICE_URL="nodejs-service:3000"
+
 WORKDIR /app
 
 COPY requirements.txt requirements.txt

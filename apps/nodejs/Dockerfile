@@ -1,5 +1,7 @@
 FROM node:18-alpine
 
+ENV PY_SERVICE_URL="py-service:8080"
+
 ENV NODE_ENV=production
 
 WORKDIR /app
