@@ -8,4 +8,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD ["python3", "-m" , "flask", "run", "-p", "8080"]
+EXPOSE 8080
+
+CMD ["python3", "-m" , "flask", "run", "-p", "8080", "--host", "0.0.0.0"]
