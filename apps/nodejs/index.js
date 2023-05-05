@@ -1,3 +1,6 @@
+import { instrument } from './tracing.js'
+instrument()
+
 import express from 'express'
 
 const app = express()
