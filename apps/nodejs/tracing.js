@@ -1,34 +1,36 @@
-import { Resource } from "@otel/resources";
-import { SemanticResourceAttributes } from "@otel/semantic-conventions";
-import { NodeTracerProvider } from "@otel/sdk-trace-node";
-import { registerInstrumentations } from "@otel/instrumentation";
-import { ConsoleSpanExporter, BatchSpanProcessor } from "@otel/sdk-trace-base";
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express'
+const { NodeSDK } = require('@opentelemetry/sdk-node');
+const {
+    AlwaysOnSampler,
+    BatchSpanProcessor,
+} = require('@opentelemetry/sdk-trace-base');
+const { Resource } = require('@opentelemetry/resources');
+const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
+const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
+const { ExpressInstrumentation } = require('@opentelemetry/instrumentation-express');
+const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node')
 
-export function instrument() {
-    // Optionally register instrumentation libraries
-    registerInstrumentations({
-        instrumentations: [
-            new HttpInstrumentation(),
-            new ExpressInstrumentation()
-        ],
-    });
+const resource = new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: 'nodejs-service',
+});
 
-    const resource =
-        Resource.default().merge(
-            new Resource({
-                [SemanticResourceAttributes.SERVICE_NAME]: "nodejs-service",
-                [SemanticResourceAttributes.SERVICE_VERSION]: "0.1.0",
-            })
-        );
+const instrumentations = [
+    new ExpressInstrumentation(),
+    getNodeAutoInstrumentations()
+];
 
-    const provider = new NodeTracerProvider({
-        resource,
-    });
-    const exporter = new ConsoleSpanExporter();
-    const processor = new BatchSpanProcessor(exporter);
+const spanProcessor = new BatchSpanProcessor(
+    new JaegerExporter({
+        endpoint: 'http://jaeger:14268/api/traces'
+    }),
+);
 
-    provider.addSpanProcessor(processor);
-    provider.register();
-}
+const sampler = new AlwaysOnSampler();
+
+const sdk = new NodeSDK({
+    sampler,
+    resource,
+    instrumentations,
+    spanProcessor,
+})
+
+sdk.start()

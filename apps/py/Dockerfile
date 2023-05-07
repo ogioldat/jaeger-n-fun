@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["python3", "-m" , "flask", "run", "-p", "8080", "--host", "0.0.0.0"]
+CMD ["opentelemetry-instrument", "python3", "-m" , "flask", "run", "-p", "8080", "--host", "0.0.0.0"]

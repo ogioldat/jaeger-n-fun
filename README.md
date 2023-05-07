@@ -1,5 +1,5 @@
 # jaeger-n-fun
-Bare minimum k8s app to demonstrate core concepts of jaeger
+Bare minimum app to demonstrate core concepts of jaeger. Either use K8s or docker compose.
 
 ### Prerequisites
 
@@ -9,3 +9,15 @@ Bare minimum k8s app to demonstrate core concepts of jaeger
     ```bash
     kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
     ```
+
+### Jaeger UI
+
+```bash
+kubectl port-forward $(kubectl get pods -l=app="jaeger" -o name) 16686:16686
+```
+
+### Dashboard
+
+```bash
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+```

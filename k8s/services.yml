@@ -41,6 +41,8 @@ kind: Deployment
 metadata:
   name: py
   namespace: jaeger-n-fun
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
 spec:
   selector:
     matchLabels:
