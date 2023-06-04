@@ -13,20 +13,13 @@ trace.set_tracer_provider(
         resource=Resource.create({SERVICE_NAME: "py-service"})
     )
 )
-tracer = trace.get_tracer(__name__)
-
 jaeger_exporter = JaegerExporter(
     agent_host_name='jaeger',
     agent_port=6831,
     collector_endpoint='http://jaeger:14268/api/traces',
 )
-
-# Create a BatchSpanProcessor and add the exporter to it
 span_processor = BatchSpanProcessor(jaeger_exporter)
-
 trace.get_tracer_provider().add_span_processor(span_processor)
-with tracer.start_as_current_span('foo'):
-    print('Hello world!')
 
 
 def get_nodejs_service_url():
